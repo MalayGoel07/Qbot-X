@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function TopBar({ onProfile }) {
+function TopBar({ onProfile, onSettings }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -21,7 +21,7 @@ function TopBar({ onProfile }) {
           <div className="absolute right-0 mt-2 w-52 bg-slate-900 border border-zinc-700 rounded-lg shadow-xl shadow-black/40 z-50 p-3 flex flex-col gap-2">
             <div className="text-xs text-slate-400 uppercase tracking-widest mb-1">Account</div>
             <button onClick={() => { onProfile(); setOpen(false); }} className="text-left text-sm text-white hover:text-blue-500 transition-colors px-1 py-1">👤 View Profile</button>
-            <button className="text-left text-sm text-white hover:text-blue-500 transition-colors px-1 py-1">⚙️ Settings</button>
+            <button onClick={() => { onSettings(); setOpen(false); }} className="text-left text-sm text-white hover:text-blue-500 transition-colors px-1 py-1">⚙️ Settings</button>
             <hr className="border-zinc-700 my-1" />
             <button className="text-left text-sm text-red-300 hover:text-red-400 transition-colors px-1 py-1">🚪 Logout</button>
           </div>

@@ -38,7 +38,29 @@ class BaseWorker:
             response = await client.chat( model=self.model, messages=messages, options={"temperature": self.temperature, "num_predict": self.num_predict}, keep_alive=self.keep_alive,)
         return response["message"]["content"]
 
-router_worker = BaseWorker("Router",'You are an expert router, according to task choose the worker from: ["Researcher", "Writer", "Coder", "Maths"] wisely. Reply ONLY with a JSON array. No explanation. No prose. Example: ["Maths"] or ["Researcher", "Writer"]', M_ROUTER,50,0.2)
+router_worker = BaseWorker(
+    "Router",
+    '''
+    You are a task router. Given a user message, return ONLY a JSON array of the single most relevant worker.
+        Workers:
+        - "Researcher": factual questions, definitions, explanations, general knowledge.
+        - "Writer": essays, summaries, creative writing, rewriting.
+        - "Coder": code generation, debugging, programming questions.
+        - "Maths": calculations, equations, math problems.
+
+        Rules:
+        - Default to ["Researcher"] when unsure.
+        - NEVER return all four unless the task truly requires all four.
+        - Reply ONLY with a JSON array. No explanation, No prose.
+
+        Examples:
+        Q: What are nouns? → ["Researcher"]
+        Q: Write a poem about rain → ["Writer"]
+        Q: Sort a list in Python → ["Coder"]
+        Q: Solve 2x + 5 = 11 → ["Maths"]
+        Q: Research and write a blog post on AI → ["Researcher", "Writer"]
+    ''',M_ROUTER, 50, 0.1
+)
 research_worker = BaseWorker("Researcher","You are a factual analyst. Research and reason about the given topic thoroughly.",M_RESEARCH,400,0.5)
 writer_worker = BaseWorker("Writer","You are a skilled writer. Produce clear, well-structured output based on provided context.",M_WRITER,500,0.7)
 coder_worker = BaseWorker("Coder","You are an expert programmer. Write clean, correct, well-commented code.",M_CODER,800,0.3)

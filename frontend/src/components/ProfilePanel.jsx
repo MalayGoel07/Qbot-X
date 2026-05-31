@@ -28,9 +28,9 @@ function ProfilePanel({ onClose }) {
           <span className="text-sm font-medium text-zinc-100">What should CB-X call u?</span>
           <input type="text" className="text-xs text-center font-mono text-white outline-none border border-blue-300"/>
         </div>
-        <div className="flex items-center justify-between py-3">
+        <div className="flex flex-col item-start justify-between py-3 gap-2">
           <span className="text-sm font-medium text-zinc-100">Instructions?</span>
-          <input type="text" className="text-xs text-center font-mono text-white outline-none border border-blue-300"/>
+          <textarea type="text" className="text-xs p-2 font-mono text-white w-[330px] h-[200px] outline-none border border-blue-300"/>
         </div>
       </div>
 
