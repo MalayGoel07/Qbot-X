@@ -4,7 +4,7 @@ function InputBar({ input, onChange, onSend, loading }) {
   const [focused, setFocused] = useState(false);
 
   return (
-    <div className={`flex items-center h-[50px] backdrop-blur-xl border rounded-[28px] shadow-2xl px-3 gap-2 transition-all duration-200
+    <div className={`flex items-center w-[800px] h-[50px] max-w-[1000px] min-w-[600px] backdrop-blur-xl border rounded-[28px] shadow-2xl px-3 gap-2 hover:border-blue-500 hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-105 transition-all duration-300
       ${focused ? 'bg-slate-950 border-blue-500' : 'bg-slate-900 hover:bg-slate-950 border-slate-900 hover:border-blue-500'}`}>
       <div className="w-px h-6 bg-blue-500 shrink-0" />
       <input

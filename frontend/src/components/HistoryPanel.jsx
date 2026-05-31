@@ -10,7 +10,7 @@ function HistoryPanel({ history, onClear, onClose }) {
         </div>
       </div>
       <div className="flex-1 max-h-screen overflow-y-auto space-y-4 pr-2 scrollbar-thumb-cyan-200 scrollbar-thin">
-        {history.length === 0 && (<div className="text-zinc-500 text-sm">No chats yet...</div>)}
+        {history.length === 0 && (<div className="text-zinc-400 text-sm">No chats yet...</div>)}
         {history.map((msg, index) => (
           <div key={index} className={`rounded-2xl px-4 py-3 text-sm shadow-lg border ${ msg.role === "user" ? "bg-cyan-500/10 border-cyan-500/20" : "bg-slate-950 border-zinc-700"}`}>
             <p className={`font-semibold mb-1 ${msg.role === "user" ? "text-cyan-400" : "text-blue-400"}`}>{msg.role === "user" ? "You" : "CB-X"}</p>
