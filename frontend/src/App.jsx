@@ -7,6 +7,7 @@ import OutputBox from "./components/OutputBox";
 import InputBar from "./components/InputBar";
 import ActionBar from "./components/ActionBar";
 import TopBar from "./components/TopBar";
+import ProfilePanel from "./components/ProfilePanel";
 
 function App() {
   const [input,setInput]=useState("");
@@ -17,6 +18,8 @@ function App() {
   const [showThoughts,setShowThoughts]=useState(false);
   const [showHistory,setShowHistory]=useState(true);
   const [showModels,setShowModels]=useState(false);
+  const [showProfile,setShowProfile]=useState(false);
+
   const send = async () => {
     if (!input.trim())
       return;
@@ -32,9 +35,9 @@ function App() {
     setHistory((prev) => [...prev,{ role:"user",content: input },{ role:"assistant",content: finalText }]);
     setLoading(false);
   };
-
-  const openHistory = ()=>{ setShowHistory(true); setShowModels(false); };
-  const openModels = ()=>{ setShowModels(true); setShowHistory(false); };
+  const openProfile = ()=>{ setShowProfile(true); setShowHistory(false); setShowModels(false); };
+  const openHistory = ()=>{ setShowHistory(true); setShowModels(false); setShowProfile(false); };
+  const openModels = ()=>{ setShowModels(true); setShowHistory(false); setShowProfile(false); };
   const clearChat = ()=>{ setHistory([]); setOutput(""); };
   const onNewChat = ()=>{ setThought(""); setHistory([]); setInput(""); setOutput(""); };
 
@@ -43,7 +46,7 @@ function App() {
       {showHistory && (<HistoryPanel history={history} onClear={clearChat} onClose={() => setShowHistory(false)}/>)}
       {showModels && (<ModelsPanel onClose={() => setShowModels(false)} />)}
       <div className="flex-1 flex flex-col items-center justify-center p-5 gap-4">
-          <TopBar />
+          <TopBar onProfile={openProfile}/>
           <div className="flex flex-row gap-4 w-[1000px] item-center justify-center">
             <OutputBox output={output} onSend={send} loading={loading}/>
             <ActionBar onThoughts={() => setShowThoughts(true)} onHistory={openHistory} onModels={openModels} onNewChat={onNewChat}/>
@@ -51,6 +54,7 @@ function App() {
           <InputBar input={input} onChange={setInput} onSend={send} loading={loading}/>
       </div>
       {showThoughts && (<ThoughtsModal thought={thought} onClose={() => setShowThoughts(false)} />)}
+      {showProfile && (<ProfilePanel onClose={() => setShowProfile(false)} />)}
     </div>
   );
 }
