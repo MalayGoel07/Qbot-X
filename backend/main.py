@@ -104,5 +104,21 @@ async def get_me(
 async def chat(req: ChatRequest, current_user: Annotated[User, Depends(get_current_active_user)]):
     return StreamingResponse(orchestrate(req.message, req.history), media_type="text/event-stream")
 
+@app.get("/history")
+async def get_history(current_user: Annotated[User, Depends(get_current_active_user)]):
+    user = users_collection.find_one({"username": current_user.username})
+    return {"history": user.get("history", [])}
+
+@app.post("/history")
+async def save_history(
+    data: dict,
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    users_collection.update_one(
+        {"username": current_user.username},
+        {"$set": {"history": data["history"]}}
+    )
+    return {"message": "History saved"}
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

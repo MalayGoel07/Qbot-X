@@ -29,27 +29,30 @@ function App() {
   const send = async () => {
     if (!input.trim())
       return;
-
     setLoading(true);
     setOutput("");
-
     const result = await base(input, (chunk) => setThought(chunk), history);
     const match = result.match(/\[Final\]([\s\S]*?)(?:\[DONE\]|$)/i);
     const finalText = match ? match[1].trim() : result;
-
     setOutput(finalText);
     setHistory((prev) => [...prev,{ role:"user",content: input },{ role:"assistant",content: finalText }]);
     setLoading(false);
-  };
+    };
   
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) 
-      localStorage.setItem(`history_${token}`, JSON.stringify(history));},[history]);
+    if (!token) return;
+      fetch("http://localhost:8000/history", {headers: { "Authorization": `Bearer ${token}` }}).then(r => r.json()).then(data => setHistory(data.history || []));}, []);
 
-  const clearChat = () => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
-    localStorage.removeItem(`history_${token}`);
+    if (!token || history.length === 0) 
+      return;
+    fetch("http://localhost:8000/history", { method: "POST", headers: {"Content-Type": "application/json","Authorization": `Bearer ${token}`},body: JSON.stringify({ history })});}, [history]);
+
+  const clearChat = async () => {
+    const token = localStorage.getItem("token");
+    await fetch("http://localhost:8000/history", { method: "POST", headers: {"Content-Type": "application/json","Authorization": `Bearer ${token}`},body: JSON.stringify({ history: [] })});
     setHistory([]);
     setOutput("");
   };
