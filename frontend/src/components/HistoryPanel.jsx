@@ -1,4 +1,5 @@
 function HistoryPanel({ history, onClear, onClose }) {
+  
   return (
     <div className="w-[350px] border-r border-zinc-800 bg-slate-900 backdrop-blur-xl p-5 flex flex-col">
       <div className="flex items-center justify-between py-2">

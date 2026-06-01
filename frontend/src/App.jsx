@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import base from "./api/base";
 import HistoryPanel from "./components/HistoryPanel";
 import ModelsPanel from "./components/ModelsPanel";
@@ -14,10 +14,14 @@ function App() {
   const [input,setInput]=useState("");
   const [output,setOutput]=useState("");
   const [loading,setLoading]=useState(false);
-  const [history,setHistory]=useState([]);
+  const [history, setHistory] = useState(() => {
+      const token = localStorage.getItem("token");
+      const saved = localStorage.getItem(`history_${token}`);
+      return saved ? JSON.parse(saved) : [];
+    });
   const [thought,setThought]=useState("");
   const [showThoughts,setShowThoughts]=useState(false);
-  const [showHistory,setShowHistory]=useState(true);
+  const [showHistory,setShowHistory]=useState(false);
   const [showModels,setShowModels]=useState(false);
   const [showProfile,setShowProfile]=useState(false);
   const [showSettings,setShowSettings]=useState(false);
@@ -30,18 +34,30 @@ function App() {
     setOutput("");
 
     const result = await base(input, (chunk) => setThought(chunk), history);
-    const match = result.match(/\[Final\]([\s\S]*?)\[DONE\]/i);
+    const match = result.match(/\[Final\]([\s\S]*?)(?:\[DONE\]|$)/i);
     const finalText = match ? match[1].trim() : result;
 
     setOutput(finalText);
     setHistory((prev) => [...prev,{ role:"user",content: input },{ role:"assistant",content: finalText }]);
     setLoading(false);
   };
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) 
+      localStorage.setItem(`history_${token}`, JSON.stringify(history));},[history]);
+
+  const clearChat = () => {
+    const token = localStorage.getItem("token");
+    localStorage.removeItem(`history_${token}`);
+    setHistory([]);
+    setOutput("");
+  };
+
   const openSettings = ()=>{ setShowSettings(true); setShowProfile(false); setShowHistory(false); setShowModels(false); };
   const openProfile = ()=>{ setShowProfile(true); setShowHistory(false); setShowModels(false); setShowSettings(false); };
   const openHistory = ()=>{ setShowHistory(true); setShowModels(false); setShowProfile(false); setShowSettings(false); };
   const openModels = ()=>{ setShowModels(true); setShowHistory(false); setShowProfile(false); setShowSettings(false); };
-  const clearChat = ()=>{ setHistory([]); setOutput(""); };
   const onNewChat = ()=>{ setThought(""); setHistory([]); setInput(""); setOutput(""); };
 
   return (

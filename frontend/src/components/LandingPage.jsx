@@ -80,7 +80,7 @@ export default function CBXLanding() {
         </h1>
         <p className="text-gray-400 text-[16px] max-w-xl mx-auto mb-10">CB-X routes your queries to the right specialist AI — researcher, coder, writer, mathematician — then merges the best answer for you.</p>
         <div className="flex items-center justify-center gap-4">
-          <button className="bg-[#4a9eff] hover:bg-[#3a8eef] text-white px-6 py-2.5 rounded-lg font-medium transition-colors">Start Chatting</button>
+          <button onClick={() => navigate("/logsign")} className="bg-[#4a9eff] hover:bg-[#3a8eef] text-white px-6 py-2.5 rounded-lg font-medium transition-colors">Start Chatting</button>
           <a href="#models" className="border border-[#1e2d3d] hover:border-[#4a9eff] text-gray-300 hover:text-white px-6 py-2.5 rounded-lg font-medium transition-colors">View Models</a>
         </div>
       </section>

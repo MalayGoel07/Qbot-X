@@ -1,18 +1,13 @@
-
 async function base(input, onchunk, history = []) {
     try {
         const token = localStorage.getItem("token");
         const response = await fetch("http://localhost:8000/chat", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: {"Content-Type": "application/json","Authorization": `Bearer ${token}`},
             body: JSON.stringify({ message: input, history })
         });
 
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let result = "";
@@ -20,14 +15,15 @@ async function base(input, onchunk, history = []) {
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-
             const chunk = decoder.decode(value);
             const lines = chunk.split("\n");
-
             for (let line of lines) {
                 if (line.startsWith("data: ")) {
                     const text = line.replace("data: ", "");
-                    if (text === "[DONE]") break;
+                    if (text === "[DONE]") {
+                        result += "\n[DONE]";
+                        break;
+                    }
                     if (
                         text.startsWith("[Router]") ||
                         text.startsWith("[Researcher]") ||
@@ -40,7 +36,6 @@ async function base(input, onchunk, history = []) {
                     } else {
                         result += text;
                     }
-
                     if (onchunk) onchunk(result);
                 }
             }
