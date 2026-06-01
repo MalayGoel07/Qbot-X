@@ -45,10 +45,17 @@ function App() {
   const onNewChat = ()=>{ setThought(""); setHistory([]); setInput(""); setOutput(""); };
 
   return (
-    <div className="max-h-screen min-h-screen bg-slate-950 text-white flex">
-      {showHistory && (<HistoryPanel history={history} onClear={clearChat} onClose={() => setShowHistory(false)}/>)}
-      {showModels && (<ModelsPanel onClose={() => setShowModels(false)} />)}
-      <div className="flex-1 flex flex-col items-center justify-center p-5 gap-4">
+    <div className="max-h-screen min-h-screen bg-[#0a0f18] text-white flex">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="strip absolute w-full h-px top-[20%]" style={{ animationDuration: '2.8s' }}></div>
+        <div className="strip absolute w-full h-[3px] top-[20%] blur-sm opacity-50" style={{ animationDuration: '2.8s' }}></div>
+        <div className="strip absolute w-full h-px top-[50%] opacity-40"  style={{ animationDuration: '3.5s', animationDelay: '-1.5s' }}></div>
+        <div className="strip absolute w-full h-[3px] top-[50%] blur-sm opacity-30" style={{ animationDuration: '3.5s', animationDelay: '-1.5s' }}></div>
+        <div className="strip absolute w-full h-px top-[78%] opacity-30"  style={{ animationDuration: '4s',   animationDelay: '-2.8s' }}></div>
+      </div>        
+      {showHistory && (<HistoryPanel history={history} onClear={clearChat} onClose={() => setShowHistory(false)} z-50/>)}
+      {showModels && (<ModelsPanel onClose={() => setShowModels(false)} z-50/>)}
+      <div className="flex-1 flex flex-col items-center justify-center p-5 gap-4 z-50">
           <TopBar onProfile={openProfile} onSettings={openSettings}/>
           <div className="flex flex-row gap-4 w-[1000px] item-center justify-center">
             <OutputBox output={output} onSend={send} loading={loading}/>
@@ -56,9 +63,9 @@ function App() {
           </div>
           <InputBar input={input} onChange={setInput} onSend={send} loading={loading}/>
       </div>
-      {showThoughts && (<ThoughtsModal thought={thought} onClose={() => setShowThoughts(false)} />)}
-      {showProfile && (<ProfilePanel onClose={() => setShowProfile(false)} />)}
-      {showSettings && (<SettingPanel onClose={() => setShowSettings(false)} />)}
+      {showThoughts && (<ThoughtsModal thought={thought} onClose={() => setShowThoughts(false)} z-50/>)}
+      {showProfile && (<ProfilePanel onClose={() => setShowProfile(false)} z-50/>)}
+      {showSettings && (<SettingPanel onClose={() => setShowSettings(false)} z-50/>)}
     </div>
   );
 }

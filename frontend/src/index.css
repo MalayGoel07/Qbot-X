@@ -1,1 +1,19 @@
 @import "tailwindcss";
+.strip {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 15%,
+    #00d4ff 40%,
+    #00ffff 50%,
+    #00d4ff 60%,
+    transparent 85%,
+    transparent 100%
+  );
+  animation: slide linear infinite;
+}
+
+@keyframes slide {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
