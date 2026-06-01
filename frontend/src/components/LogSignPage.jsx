@@ -1,9 +1,42 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
 export default function LogSignPage() {
   const [mode, setMode] = useState("login");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    setError("");
+    try {
+      if (mode === "login") {
+        const formData = new FormData();
+        formData.append("username", email);
+        formData.append("password", password);
+        const { data } = await api.post("/auth/login", formData);
+        localStorage.setItem("token", data.access_token);
+        navigate("/chat");
+
+      } else {
+        if (password !== confirmPassword) return setError("Passwords don't match");
+        const { data } = await api.post("/auth/signup", {
+          username: email,
+          email: email,
+          full_name: fullName,
+          password: password,
+        });
+        localStorage.setItem("token", data.access_token);
+        navigate("/chat");
+      }
+    } catch (err) {
+      setError(err.response?.data?.detail || "Something went wrong");
+    }
+  };
   return (
     <div className="h-screen bg-[#0a0f18] text-white font-sans overflow-hidden flex flex-col">
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -37,27 +70,27 @@ export default function LogSignPage() {
             {mode === "signup" && (
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Full Name</label>
-                <input type="text" placeholder="John Doe" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"/>
+                <input value={fullName} onChange={e => setFullName(e.target.value)} type="text" placeholder="John Doe" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"/>
               </div>
             )}
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Email</label>
-              <input type="email" placeholder="you@example.com" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"  />
+              <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="you@example.com" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"  />
             </div>
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Password</label>
-              <input type="password" placeholder="••••••••" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"  />
+              <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="••••••••" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"  />
             </div>
 
             {mode === "signup" && (
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Confirm Password</label>
-                <input type="password" placeholder="••••••••" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"/>
+                <input value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} type="password" placeholder="••••••••" className="w-full bg-[#131c2b] border border-[#1e2d3d] rounded-lg px-4 py-2.5 text-sm text-gray-300 outline-none focus:border-[#4a9eff]/50 transition-colors placeholder-gray-600"/>
               </div>
             )}
-
+            {error && <p className="text-red-400 text-xs text-center">{error}</p>}
             {mode === "login" && (<div className="flex justify-end"><button className="text-xs text-[#4a9eff] hover:text-[#00e5ff] transition-colors">Forgot password?</button></div>)}
-            <button className="w-full bg-[#4a9eff] hover:bg-[#3a8eef] text-white py-2.5 rounded-lg text-sm font-medium transition-colors">{mode === "login" ? "Sign In" : "Create Account"}</button>
+            <button onClick={handleSubmit} className="w-full bg-[#4a9eff] hover:bg-[#3a8eef] text-white py-2.5 rounded-lg text-sm font-medium transition-colors">{mode === "login" ? "Sign In" : "Create Account"}</button>
             <p className="text-center text-xs text-gray-500">
               {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
               <button onClick={() => setMode(mode === "login" ? "signup" : "login")} className="text-[#4a9eff] hover:text-[#00e5ff] transition-colors">{mode === "login" ? "Sign up" : "Log in"} </button>
