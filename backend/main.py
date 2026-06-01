@@ -54,6 +54,7 @@ async def signup(user: UserSignup) -> Token:
     hashed = get_password_hash(user.password)
     users_collection.insert_one({
         "username": user.username,
+        "full_name": user.full_name,
         "email": user.email,
         "hashed_password": hashed,
         "disabled": False
@@ -61,6 +62,43 @@ async def signup(user: UserSignup) -> Token:
     access_token = create_access_token(data={"sub": user.username})
     return Token(access_token=access_token, token_type="bearer")
 
+class ProfileUpdate(BaseModel):
+    full_name: str | None = None
+    nickname: str | None = None
+    instructions: str | None = None
+
+@app.put("/me")
+async def update_me(
+    data: ProfileUpdate,
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    users_collection.update_one(
+        {"username": current_user.username},
+        {
+            "$set": {
+                "full_name": data.full_name,
+                "nickname": data.nickname,
+                "instructions": data.instructions
+            }
+        }
+    )
+
+    return {"message": "Profile updated"}
+
+@app.get("/me")
+async def get_me(
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    user = users_collection.find_one(
+        {"username": current_user.username}
+    )
+
+    return {
+        "username": user.get("full_name", user["username"]),
+        "email": user.get("email", ""),
+        "nickname": user.get("nickname", ""),
+        "instructions": user.get("instructions", "")
+    }
 
 @app.post("/chat")
 async def chat(req: ChatRequest, current_user: Annotated[User, Depends(get_current_active_user)]):

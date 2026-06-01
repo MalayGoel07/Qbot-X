@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function TopBar({ onProfile, onSettings }) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+      localStorage.removeItem("token");
+      navigate("/");
+  }
 
   return (
     <header className="flex items-center justify-between w-full bg-[#0a0f18]">
@@ -23,7 +30,7 @@ function TopBar({ onProfile, onSettings }) {
             <button onClick={() => { onProfile(); setOpen(false); }} className="text-left text-sm text-white hover:text-blue-500 transition-colors px-1 py-1">👤 View Profile</button>
             <button onClick={() => { onSettings(); setOpen(false); }} className="text-left text-sm text-white hover:text-blue-500 transition-colors px-1 py-1">⚙️ Settings</button>
             <hr className="border-zinc-700 my-1" />
-            <button className="text-left text-sm text-red-300 hover:text-red-400 transition-colors px-1 py-1">🚪 Logout</button>
+            <button onClick={handleLogout} className="text-left text-sm text-red-300 hover:text-red-400 transition-colors px-1 py-1">🚪 Logout</button>
           </div>
         )}
       </div>

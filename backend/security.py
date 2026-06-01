@@ -33,7 +33,8 @@ class UserInDB(User):
 
 class UserSignup(BaseModel):
     username: str
-    email: str | None = None
+    email: str
+    full_name: str | None = None
     password: str
 
 
